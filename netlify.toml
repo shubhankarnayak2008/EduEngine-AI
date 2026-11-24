@@ -1,0 +1,54 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+  functions = "netlify/functions"
+
+# Explicit MIME types for all JavaScript and CSS assets
+# Prevents "Expected a JavaScript-or-Wasm module script but the server responded with a MIME type of application/octet-stream"
+[[headers]]
+  for = "/assets/*.js"
+  [headers.values]
+    Content-Type = "application/javascript; charset=utf-8"
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Content-Type = "application/javascript; charset=utf-8"
+
+[[headers]]
+  for = "/*.mjs"
+  [headers.values]
+    Content-Type = "application/javascript; charset=utf-8"
+
+[[headers]]
+  for = "/assets/*.css"
+  [headers.values]
+    Content-Type = "text/css; charset=utf-8"
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+
+# Proxy Gemini API to Netlify Serverless Function
+[[redirects]]
+  from = "/api/gemini/*"
+  to = "/.netlify/functions/gemini/:splat"
+  status = 200
+  force = true
+
+# Health check endpoint
+[[redirects]]
+  from = "/api/health"
+  to = "/.netlify/functions/health"
+  status = 200
+  force = true
+
+# Single-Page Application (SPA) fallback to index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
