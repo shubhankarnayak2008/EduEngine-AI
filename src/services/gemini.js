@@ -19,8 +19,8 @@ export const AVAILABLE_MODELS = [
   { id: "gemini-3.5-flash-lite", name: "Gemini 3.5 Flash Lite (Ultra Fast & Recommended)" },
   { id: "gemini-3.8-flash", name: "Gemini 3.8 Flash (High Intelligence & Speed)" },
   { id: "gemini-2.0-flash", name: "Gemini 2.0 Flash (Next-Gen Fast & Reliable)" },
-  { id: "gemini-1.5-flash", name: "Gemini 1.5 Flash (Standard Academic Model)" },
-  { id: "gemini-1.5-pro", name: "Gemini 1.5 Pro (Deep Engineering Reasoning)" },
+  { id: "gemini-2.5-flash", name: "Gemini 2.5 Flash (Standard Academic Model)" },
+  { id: "gemini-2.5-pro", name: "Gemini 2.5 Pro (Deep Engineering Reasoning)" },
 ];
 
 export const CANDIDATE_FALLBACK_MODELS = [
@@ -62,7 +62,7 @@ export function getDirectClientKey() {
       const k = (localStorage.getItem('gemini_api_key') || '').trim();
       if (k && !k.includes('PASTE_YOUR_') && k.length > 5) return k;
     }
-  } catch (e) {}
+  } catch (e) { }
   return '';
 }
 
@@ -244,8 +244,8 @@ export async function streamGeminiContent({
         const errMsg = errorJson?.error?.message || `HTTP ${response.status}: ${response.statusText}`;
 
         // If model not found (404) or unsupported method on this model, try next candidate
-        const isModelNotFound = response.status === 404 || 
-          errMsg.includes('not found') || 
+        const isModelNotFound = response.status === 404 ||
+          errMsg.includes('not found') ||
           errMsg.includes('not supported') ||
           errMsg.includes('Call ModelService.ListModels');
 
@@ -312,8 +312,8 @@ export async function streamGeminiContent({
       if (err.name === 'AbortError') throw err;
       lastError = err;
       const isModelNotFound = err.message && (
-        err.message.includes('not found') || 
-        err.message.includes('not supported') || 
+        err.message.includes('not found') ||
+        err.message.includes('not supported') ||
         err.message.includes('Call ModelService.ListModels')
       );
       if (isModelNotFound && i < uniqueModels.length - 1) {
@@ -399,9 +399,9 @@ export async function callGeminiApi({
         const errorJson = await response.json().catch(() => null);
         const errMsg = errorJson?.error?.message || `HTTP ${response.status}: ${response.statusText}`;
 
-        const isModelNotFound = response.status === 404 || 
-          errMsg.includes('not found') || 
-          errMsg.includes('not supported') || 
+        const isModelNotFound = response.status === 404 ||
+          errMsg.includes('not found') ||
+          errMsg.includes('not supported') ||
           errMsg.includes('Call ModelService.ListModels');
 
         if (isModelNotFound && i < uniqueModels.length - 1) {
@@ -521,9 +521,9 @@ export async function testGeminiApiKey(preferredModel) {
       const err = await response.json().catch(() => null);
       const msg = err?.error?.message || `HTTP ${response.status}`;
 
-      const isModelNotFound = response.status === 404 || 
-        msg.includes('not found') || 
-        msg.includes('not supported') || 
+      const isModelNotFound = response.status === 404 ||
+        msg.includes('not found') ||
+        msg.includes('not supported') ||
         msg.includes('Call ModelService.ListModels');
 
       if (isModelNotFound) {
